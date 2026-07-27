@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36793882908b6cbdd344b5a4840231db",
+    "content-hash": "e10f76996907695588236c1bfe28ae8a",
     "packages": [
         {
             "name": "brick/math",
@@ -506,6 +506,41 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "feeder/core",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../feeder-core",
+                "reference": "ec82d3b5fc7cc7ff6faec92ab4aecb4999c7a3a3"
+            },
+            "require": {
+                "illuminate/database": "^13.0",
+                "illuminate/support": "^13.0",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Feeder\\Core\\Providers\\FeederCoreServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Feeder\\Core\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Shared business logic for the Feeder Dropshipping Platform",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "fruitcake/php-cors",
@@ -8396,7 +8431,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "feeder/core": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
