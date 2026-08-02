@@ -10,4 +10,12 @@ class File extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return [
+            'metadata' => 'array',
+            'size' => 'integer',
+        ];
+    }
 }

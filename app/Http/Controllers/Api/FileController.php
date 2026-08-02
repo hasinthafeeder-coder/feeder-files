@@ -19,6 +19,9 @@ class FileController extends Controller
             'message' => 'File uploaded successfully.',
             'file' => [
                 'uuid' => $file->uuid,
+                'application' => $file->application,
+                'entity_type' => $file->entity_type,
+                'entity_uuid' => $file->entity_uuid,
                 'category' => $file->category,
                 'original_name' => $file->original_name,
                 'mime_type' => $file->mime_type,
