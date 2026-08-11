@@ -20,4 +20,10 @@ Route::prefix('files')
         });
 
         Route::post('/upload', [FileController::class, 'upload']);
+
+        Route::get('/{uuid}/view', [FileController::class, 'view']);
+
+        Route::get('/{uuid}/download', [FileController::class, 'download']);
+
+        Route::get('/{uuid}/thumbnail', [FileController::class, 'thumbnail']);
     });
