@@ -47,6 +47,8 @@ class FileUploadService
 
             'BUSINESS_REGISTRATION' => 'business-registrations',
 
+            'PRODUCT_GUIDELINE' => 'product-guidelines',
+
             'PRODUCT_IMAGE' => 'product-images',
 
             'PAYMENT_PROOF' => 'payment-proofs',

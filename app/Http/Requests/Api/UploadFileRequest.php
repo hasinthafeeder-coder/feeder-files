@@ -129,7 +129,8 @@ class UploadFileRequest extends FormRequest
                 ['image/jpeg', 'image/png', 'image/webp'],
                 5120,
             ],
-            FileCategory::BUSINESS_REGISTRATION => [
+            FileCategory::BUSINESS_REGISTRATION,
+            FileCategory::PRODUCT_GUIDELINE => [
                 ['application/pdf'],
                 10240,
             ],
@@ -179,6 +180,7 @@ class UploadFileRequest extends FormRequest
             FileCategory::COMPANY_LOGO,
             FileCategory::PRODUCT_IMAGE => 'File must be a JPG, PNG, or WebP image.',
             FileCategory::BUSINESS_REGISTRATION,
+            FileCategory::PRODUCT_GUIDELINE,
             FileCategory::INVOICE => 'File must be a PDF document.',
             FileCategory::PAYMENT_PROOF => 'File must be a JPG, PNG, WebP image, or PDF document.',
         };
