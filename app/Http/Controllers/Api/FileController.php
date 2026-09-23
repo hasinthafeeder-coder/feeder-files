@@ -57,7 +57,7 @@ class FileController extends Controller
         );
     }
 
-    public function download(string $uuid): BinaryFileResponse
+    public function download(string $uuid): StreamedResponse|BinaryFileResponse
     {
         $file = $this->fileRetrievalService->getForAccess($uuid);
 

@@ -122,26 +122,29 @@ class UploadFileRequest extends FormRequest
      */
     private function fileRulesForCategory(FileCategory $category): ?array
     {
-        return match ($category) {
-            FileCategory::PROFILE_PHOTO,
-            FileCategory::COMPANY_LOGO,
-            FileCategory::PRODUCT_IMAGE => [
+        // Match on backed values so category rules keep working when feeder-core
+        // is temporarily behind app-level categories (e.g. PRODUCT_GUIDELINE).
+        return match ($category->value) {
+            FileCategory::PROFILE_PHOTO->value,
+            FileCategory::COMPANY_LOGO->value,
+            FileCategory::PRODUCT_IMAGE->value => [
                 ['image/jpeg', 'image/png', 'image/webp'],
                 5120,
             ],
-            FileCategory::BUSINESS_REGISTRATION,
-            FileCategory::PRODUCT_GUIDELINE => [
+            FileCategory::BUSINESS_REGISTRATION->value,
+            'PRODUCT_GUIDELINE' => [
                 ['application/pdf'],
                 10240,
             ],
-            FileCategory::PAYMENT_PROOF => [
+            FileCategory::PAYMENT_PROOF->value => [
                 ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
                 10240,
             ],
-            FileCategory::INVOICE => [
+            FileCategory::INVOICE->value => [
                 ['application/pdf'],
                 10240,
             ],
+            default => null,
         };
     }
 
@@ -175,14 +178,15 @@ class UploadFileRequest extends FormRequest
 
     private function invalidTypeMessage(FileCategory $category): string
     {
-        return match ($category) {
-            FileCategory::PROFILE_PHOTO,
-            FileCategory::COMPANY_LOGO,
-            FileCategory::PRODUCT_IMAGE => 'File must be a JPG, PNG, or WebP image.',
-            FileCategory::BUSINESS_REGISTRATION,
-            FileCategory::PRODUCT_GUIDELINE,
-            FileCategory::INVOICE => 'File must be a PDF document.',
-            FileCategory::PAYMENT_PROOF => 'File must be a JPG, PNG, WebP image, or PDF document.',
+        return match ($category->value) {
+            FileCategory::PROFILE_PHOTO->value,
+            FileCategory::COMPANY_LOGO->value,
+            FileCategory::PRODUCT_IMAGE->value => 'File must be a JPG, PNG, or WebP image.',
+            FileCategory::BUSINESS_REGISTRATION->value,
+            'PRODUCT_GUIDELINE',
+            FileCategory::INVOICE->value => 'File must be a PDF document.',
+            FileCategory::PAYMENT_PROOF->value => 'File must be a JPG, PNG, WebP image, or PDF document.',
+            default => 'File type is not allowed for this category.',
         };
     }
 }
