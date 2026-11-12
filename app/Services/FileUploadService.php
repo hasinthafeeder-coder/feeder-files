@@ -55,6 +55,10 @@ class FileUploadService
 
             'INVOICE' => 'invoices',
 
+            'NOTIFICATION_BANNER' => 'notification-banners',
+
+            'MEETING_BANNER' => 'meeting-banners',
+
             default => 'temp',
         };
     }

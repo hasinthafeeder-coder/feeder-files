@@ -61,7 +61,7 @@ class UploadFileRequest extends FormRequest
                 'required',
                 'string',
                 'max:30',
-                Rule::enum(FileCategory::class),
+                Rule::in($this->allowedCategories()),
             ],
             'uploaded_by' => [
                 'nullable',
@@ -87,10 +87,11 @@ class UploadFileRequest extends FormRequest
                 return;
             }
 
-            $category = FileCategory::tryFrom((string) $this->input('category'));
+            $categoryValue = (string) $this->input('category');
+            $category = FileCategory::tryFrom($categoryValue) ?? $categoryValue;
             $file = $this->file('file');
 
-            if ($category === null || $file === null) {
+            if ($file === null) {
                 return;
             }
 
@@ -118,13 +119,34 @@ class UploadFileRequest extends FormRequest
     }
 
     /**
+     * @return list<string>
+     */
+    private function allowedCategories(): array
+    {
+        $categories = array_map(
+            static fn (FileCategory $category): string => $category->value,
+            FileCategory::cases()
+        );
+
+        // Keep uploads working when the installed feeder-core package lags the
+        // monorepo enum (PRODUCT_GUIDELINE / EXPENSE_DOCUMENT / NOTIFICATION_BANNER).
+        foreach (['PRODUCT_GUIDELINE', 'EXPENSE_DOCUMENT', 'NOTIFICATION_BANNER', 'MEETING_BANNER'] as $category) {
+            $categories[] = $category;
+        }
+
+        return array_values(array_unique($categories));
+    }
+
+    /**
      * @return array{0: list<string>, 1: int}|null
      */
-    private function fileRulesForCategory(FileCategory $category): ?array
+    private function fileRulesForCategory(FileCategory|string $category): ?array
     {
+        $value = $category instanceof FileCategory ? $category->value : (string) $category;
+
         // Match on backed values so category rules keep working when feeder-core
         // is temporarily behind app-level categories (e.g. PRODUCT_GUIDELINE).
-        return match ($category->value) {
+        return match ($value) {
             FileCategory::PROFILE_PHOTO->value,
             FileCategory::COMPANY_LOGO->value,
             FileCategory::PRODUCT_IMAGE->value => [
@@ -143,6 +165,11 @@ class UploadFileRequest extends FormRequest
             FileCategory::INVOICE->value => [
                 ['application/pdf'],
                 10240,
+            ],
+            'NOTIFICATION_BANNER',
+            'MEETING_BANNER' => [
+                ['image/jpeg', 'image/png', 'image/webp'],
+                5120,
             ],
             default => null,
         };
@@ -176,12 +203,16 @@ class UploadFileRequest extends FormRequest
         return array_values(array_unique($extensions));
     }
 
-    private function invalidTypeMessage(FileCategory $category): string
+    private function invalidTypeMessage(FileCategory|string $category): string
     {
-        return match ($category->value) {
+        $value = $category instanceof FileCategory ? $category->value : (string) $category;
+
+        return match ($value) {
             FileCategory::PROFILE_PHOTO->value,
             FileCategory::COMPANY_LOGO->value,
-            FileCategory::PRODUCT_IMAGE->value => 'File must be a JPG, PNG, or WebP image.',
+            FileCategory::PRODUCT_IMAGE->value,
+            'NOTIFICATION_BANNER',
+            'MEETING_BANNER' => 'File must be a JPG, PNG, or WebP image.',
             FileCategory::BUSINESS_REGISTRATION->value,
             'PRODUCT_GUIDELINE',
             FileCategory::INVOICE->value => 'File must be a PDF document.',
